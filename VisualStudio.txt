@@ -1,0 +1,197 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+using System.Data.OleDb;
+namespace WindowsFormsApplication1
+{
+    
+   
+   
+    
+    public partial class Form1 : Form
+    {
+        SqlConnection conexion = new SqlConnection(@"server=PRINCIPESCO-PC;database=dataImagen;integrated security=true");
+        
+        int cR, cG, cB;
+        string aa;
+        string colR,colG,colB;
+        int suma;
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.ShowDialog();
+            Bitmap bmp = new Bitmap(openFileDialog1.FileName);
+            pictureBox1.Image = bmp;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Bitmap bmp = new Bitmap(pictureBox1.Image);
+            Color c = new Color();
+            c = bmp.GetPixel(20, 20);
+            textBox1.Text = c.R.ToString();
+            textBox2.Text = c.G.ToString();
+            textBox3.Text = c.B.ToString();
+
+        }
+
+
+        private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
+        {
+            Bitmap bmp = new Bitmap(pictureBox1.Image);
+            Color c = new Color();
+            c = bmp.GetPixel(e.X, e.Y);
+            textBox1.Text = c.R.ToString();
+            textBox2.Text = c.G.ToString();
+            textBox3.Text = c.B.ToString();
+
+            cR = c.R; cG = c.G; cB = c.B;
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            Bitmap bmp = new Bitmap(pictureBox1.Image);
+            Bitmap bmp2 = new Bitmap(bmp.Width,bmp.Height);
+            Color c = new Color();
+            for(int i=50;i<100;i++)
+                for (int j = 50; j < 100; j++)
+                {
+                    c = bmp.GetPixel(i, j);
+                    bmp2.SetPixel(i,j,Color.FromArgb(c.R,0,0));
+                }
+            pictureBox2.Image = bmp2;
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            Bitmap bmp = new Bitmap(pictureBox1.Image);
+            Bitmap bmp2 = new Bitmap(bmp.Width, bmp.Height);
+            Color c = new Color();
+            for (int i = 0; i < bmp.Width; i++)
+                for (int j = 0; j < bmp.Height; j++)
+                {
+                    c = bmp.GetPixel(i, j);
+                    if(c.R!=cR&&c.G!=cG&&c.B!=cB)
+                        bmp2.SetPixel(i, j, c);
+                    else
+                        bmp2.SetPixel(i, j, Color.Black);
+                    
+                }
+            pictureBox2.Image = bmp2;
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            conexion.Open();
+
+            string cadena = "select * from imagenes2 where nombre='LAGO' ";//Consulta
+            SqlCommand comando = new SqlCommand(cadena, conexion);
+            SqlDataReader registro = comando.ExecuteReader();
+            if (registro.Read())//leer los datos en REGISTRO
+            {
+                aa = registro["nombre"].ToString();
+                colR = registro["valor1"].ToString();
+                colG = registro["valor2"].ToString();
+                colB = registro["valor3"].ToString();
+                cR = Int32.Parse(colR);
+                cG = Int32.Parse(colG);
+                cB = Int32.Parse(colB);
+
+
+
+            }
+            else
+            {
+                MessageBox.Show("No existe esa IMAGEN");
+            }
+            Console.WriteLine(aa + colR + colG + colB);
+
+            conexion.Close();
+
+
+            Bitmap bmp = new Bitmap(pictureBox1.Image);
+            Bitmap bmp2 = new Bitmap(bmp.Width, bmp.Height);
+            Color c = new Color();
+            for (int i = 0; i < bmp.Width; i++)
+                for (int j = 0; j < bmp.Height; j++)
+                {
+                    c = bmp.GetPixel(i, j);
+                    if (cR - 120 <= c.R && c.R <= cR + 120 && cG - 170 <= c.G && c.G <= cG + 170 && cB - 100 <= c.B && c.B <= cB+100)
+                        
+                        bmp2.SetPixel(i, j,Color.Black);
+                    else
+                        bmp2.SetPixel(i, j, c);
+
+                }
+            pictureBox2.Image = bmp2;
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            conexion.Open();
+
+            string cadena = "select * from imagenes2 where nombre='tierra'";
+            SqlCommand comando = new SqlCommand(cadena, conexion);
+            SqlDataReader registro = comando.ExecuteReader();
+            if (registro.Read())
+            {
+                aa = registro["nombre"].ToString();
+                colR = registro["valor1"].ToString();
+                colG = registro["valor2"].ToString();
+                colB = registro["valor3"].ToString();
+                cR = Int32.Parse(colR);
+                cG = Int32.Parse(colG);
+                cB = Int32.Parse(colB);
+
+
+
+            }
+            else
+            {
+                MessageBox.Show("No existe esa IMAGEN o Dato");
+            }
+            Console.WriteLine(aa + colR + colG + colB);
+
+            conexion.Close();
+
+
+            Bitmap bmp = new Bitmap(pictureBox1.Image);
+            Bitmap bmp2 = new Bitmap(bmp.Width, bmp.Height);
+            Color c = new Color();
+            for (int i = 0; i < bmp.Width; i++)
+                for (int j = 0; j < bmp.Height; j++)
+                {
+                    c = bmp.GetPixel(i, j);
+                    if (cR - 110 <= c.R && c.R <= cR + 200 && cG - 40 <= c.G && c.G <= cG + 200 && cB - 9 <= c.B && c.B <= cB + 250)
+
+                        bmp2.SetPixel(i, j, Color.Black);
+                    else
+                        bmp2.SetPixel(i, j, c);
+
+                }
+            pictureBox2.Image = bmp2;
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+           
+        }
+    }
+}
